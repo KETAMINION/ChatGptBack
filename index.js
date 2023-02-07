@@ -2,6 +2,9 @@ const express = require("express");
 require("dotenv").config();
 const { Configuration, OpenAIApi } = require("openai");
 
+require("dotenv").config({ path: __dirname + "/.env" });
+const { twitterClient } = require("./twitterClient.js")
+
 const app = express();
 const cors = require("cors");
 const response = require("express");
@@ -33,12 +36,12 @@ app.post("/find-complexity", async (req, res) => {
               ${prompt}
               #
             `,
-      max_tokens: 500,
-      temperature: 1,
-      top_p: 1.0,
+      max_tokens: 50,
+      temperature: 0.5,
+      top_p: 1,
       frequency_penalty: 0.0,
       presence_penalty: 0.0,
-      stop: ["\n"],
+      /* stop: ["\n"], */
     });
     
     
@@ -56,60 +59,39 @@ app.post("/find-complexity", async (req, res) => {
   }
 });
 
-
-
-async function generateMultipleSentences(prompt, apiKey, numSentences) {
-  const sentences = [];
-  for (let i = 0; i < numSentences; i++) {
-    prompt = `${prompt} ${sentences[sentences.length - 1]}` || prompt;
-    sentences.push((await generateText(prompt, apiKey)).trim());
-  }
-  return console.log(sentences);
-}
-generateMultipleSentences()
-
-// async function generateMultipleSentences(prompt, numSentences) {
-//   const sentences = [];
-//   const numSentencesPars = parseInt(numSentences)
-//   for (let i = 0; i < numSentencesPars; i++) {
-//     prompt = `${prompt} ${sentences[sentences.length - 1]}` || prompt;
+// app.post("/twitterpost", async (req, res) => {
+  
+//     const { prompt } = req.body;
 //     const response = await openai.createCompletion({
 //       model: "text-davinci-003",
-//       prompt: `${prompt}
-//       #`
-//       ,
-//       max_tokens: 500,
-//       temperature: 0.1,
-//       top_p: 1.0,
+//       prompt: `
+//               ${prompt}
+//               #
+//             `,
+//       max_tokens: 50,
+//       temperature: 0.5,
+//       top_p: 1,
 //       frequency_penalty: 0.0,
 //       presence_penalty: 0.0,
-//       stop: ["\n"],
+//       /* stop: ["\n"], */
 //     });
-//     sentences.push(response.data.choices[0].text.trim());
-//   }
-//   return sentences;
-// }
-
-// app.post("/find-complexity", async (req, res) => {
-//   try {
-//     const { prompt, numSentences } = req.body;
-//     const sentences = await generateMultipleSentences(prompt, numSentences);
-//     return res.status(200).json({
-//       success: true,
-//       data: sentences.join(' '),
-//     });
-//   } catch (error) {
-//     return res.status(400).json({
-//       success: false,
-//       error: error.response
-//         ? error.response.data
-//         : "There was an issue on the server",
-//     });
-//   }
+   
 // });
+  
+// const tweet = async () => {
+//   try {
+//     await twitterClient.v2.tweet("yoooooo");
+//   } catch (e) {
+//     console.log(e)
+//   }
+// }
+app.post("/twitterpost", async function(req,res) {
+  const result = await twitterClient.v2.tweet(req.body)
+  return res.json({success: true, payload: result}) 
+})
 
 
-
+// tweet();
 
 const port = process.env.PORT || 3001;
 
