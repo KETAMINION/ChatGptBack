@@ -27,21 +27,23 @@ const openai = new OpenAIApi(configuration);
 
 
 
-app.post("/find-complexity", async (req, res) => {
+app.post("/chat-gpt", async (req, res) => {
   try {
     const { prompt } = req.body;
     const response = await openai.createCompletion({
       model: "text-davinci-003",
       prompt: `
               ${prompt}
-              #
             `,
-      max_tokens: 50,
+      max_tokens: 2048,
       temperature: 0.5,
       top_p: 1,
       frequency_penalty: 0.0,
       presence_penalty: 0.0,
-      /* stop: ["\n"], */
+      // n: 2,
+      // best_of:3,
+      // stop: ["\end end end"]
+      // suffix: "Generating completed."
     });
     
     
