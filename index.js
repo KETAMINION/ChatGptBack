@@ -4,6 +4,7 @@ const cors = require("cors");
 
 const twitterRouter = require("./routes/twitterRouter");
 const chatGptRouter = require("./routes/chatGptRouter")
+const seleniumRouter = require("./routes/seleniumRouter")
 
 app.use(express.json());
 app.use(cors({ origin: true })); // enable origin cors
@@ -14,6 +15,7 @@ app.all(function (req, res, next) {
 
 app.use("/", twitterRouter);
 app.use("/", chatGptRouter);
+app.use("/", seleniumRouter)
 
 
 const port = process.env.PORT || 3001;
